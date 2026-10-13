@@ -1,0 +1,23 @@
+@startuml C4-PlantUML context diagram for PropDevelopment + SmartHome
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(owner, "Собственник", "Пользуется мобильным приложением PropDevelopment")
+Person(ops, "Оператор УК", "Сотрудник управляющей компании")
+
+System_Boundary(prop, "Платформа PropDevelopment") {
+  System(mobile, "Мобильное приложение собственника", "iOS/Android")
+  System(core, "tenant-core-app", "Сервис ЖКУ и кабинета собственника")
+}
+
+System_Ext(pay, "Платёжный провайдер", "Оплата услуг")
+System_Ext(partner, "Партнёрская платформа SmartHome", "Домофон, шлагбаум")
+
+Rel(owner, mobile, "Оплата, уведомления, управление доступом")
+Rel(ops, core, "Работа с обращениями, списки доступа")
+Rel(mobile, core, "API мобильного бэкенда", "TLS 1.2+ OIDC")
+Rel(core, partner, "Provisioning, команды открыть/закрыть", "HTTPS mTLS + request signing")
+Rel(partner, core, "Callbacks/Webhooks: распознано/доступ разрешён/отказ", "HTTPS mTLS + idempotency key")
+Rel(core, pay, "Платёжные операции", "PCI DSS-сегмент")
+
+SHOW_LEGEND()
+@enduml
